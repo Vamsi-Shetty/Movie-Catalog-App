@@ -6,8 +6,8 @@ const bcrypt = require('bcrypt');
 
 const app = express();
 
-const port = 3001;
-const filePath = './Database/dummy.json';
+const moviesFilePath = './Database/movies.json';
+const usersFilePath = './Database/users.json';
 
 app.use(
     cors({
@@ -25,14 +25,14 @@ app.post('/api/v1/signup', async (req, res) => {
         password: password
     };
     
-    fs.readFile('./Database/users.json', 'utf-8',async (err, data) => {
+    fs.readFile(usersFilePath, 'utf-8',async (err, data) => {
         if(err) {
             return res.status(401).send("error while reading file");
         }
         else {
             let allusers =  await JSON.parse(data);
             allusers.push(newUser);
-            fs.writeFile('./Database/users.json', JSON.stringify(allusers),'utf-8', (err) => {
+            fs.writeFile(usersFilePath, JSON.stringify(allusers),'utf-8', (err) => {
                 if(err) {
                     return res.json({"Error":err});
                 }
@@ -49,7 +49,7 @@ app.post('/api/v1/login', (req, res) => {
         password: password
     };
     let allusers = [];
-    fs.readFile('./Database/users.json', 'utf-8',async (err, data) => {
+    fs.readFile(usersFilePath, 'utf-8',async (err, data) => {
         if(err) {
             return res.send("error while reading gile");
         }
@@ -67,13 +67,12 @@ app.post('/api/v1/login', (req, res) => {
 });
 
 app.get('/api/v1/movies', async (req, res) => {
-    fs.readFile('./Database/movies.json', "utf-8",async (err, result) => {
+    fs.readFile(moviesFilePath, "utf-8",async (err, result) => {
         if(err) {
             return res.status(401).send("Error occured", err);
         }
         const movies = await JSON.parse(result);
-        console.log((movies.length))
-        return res.status(200).json(movies.length);
+        return res.status(200).json(movies);
     });
   });
 
@@ -81,7 +80,7 @@ app.get('/api/v1/movies/search',async (req, res) => {
     const query = req.query.q;
     let movies = [];
 
-    fs.readFile('./Database/movies.json', "utf-8",async (err, result) => {
+    fs.readFile(moviesFilePath, "utf-8",async (err, result) => {
         if(err) {
             return res.status(401).send("Error occured", err);
         }
@@ -97,6 +96,6 @@ app.get('/api/v1/movies/search',async (req, res) => {
     res.json({"movies" :movies});
 })
 
-app.listen(port, () => {
-    console.log(`Listening on PORT 3000`);
+app.listen(process.env.PORT, () => {
+    console.log(`Listening on PORT ${process.env.PORT}`);
 })
