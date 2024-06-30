@@ -23,7 +23,7 @@ const Signup = () => {
   return (
     <div className="text-center flex flex-col justify-center items-center h-screen md:h-auto">
         <div className="">
-            <h1>Create an account</h1>
+            <h1 className="font-bold">Create an account</h1>
         </div>
         <div className="text-left">
             <form onSubmit={handleSignUp}>
