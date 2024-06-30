@@ -6,6 +6,8 @@ const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
+    const baseURL = `https://movie-catalog-app.onrender.com/api/v1`
+
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
@@ -15,7 +17,7 @@ const Login = () => {
             password: password
         }
         try {
-            const response = await axios.post('http://localhost:3001/api/v1/login', newUser);
+            const response = await axios.post(`${baseURL}/login`, newUser);
             console.log(response.data);
             navigate('/');
             

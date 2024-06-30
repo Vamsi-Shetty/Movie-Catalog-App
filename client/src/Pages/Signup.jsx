@@ -6,6 +6,8 @@ const Signup = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
+    const baseURL = `https://movie-catalog-app.onrender.com/api/v1`
+
     const handleSignUp = async (e) => {
         e.preventDefault();
         const newUser = {
@@ -13,7 +15,7 @@ const Signup = () => {
             password: password
         }
         try {
-            const response = await axios.post('http://localhost:3001/api/v1/signup', newUser);
+            const response = await axios.post(`${baseURL}/signup`, newUser);
             console.log(response.data);
             alert("Signup successful. Please Login")
         } catch (error) {
