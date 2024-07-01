@@ -22,7 +22,7 @@ const Home = () => {
       
       try{
         // const res = await axios.get(`${baseURL}/movies?page=${page}&limit=${limit}`);
-        const res = await axios.get(`${localHost}/movies`, {
+        const res = await axios.get(`${baseURL}/movies`, {
           params: { page, limit, search: query }
         });
         if(res) {
