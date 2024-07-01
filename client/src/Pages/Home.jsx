@@ -9,16 +9,21 @@ const Home = () => {
   const query = searchParams.get('q') || '';
   const [isLoading, setIsLoading] = useState(true);
   const [results, setResults] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 20;
 
   const baseURL = `https://movie-catalog-app.onrender.com/api/v1`
+  const localHost = `http://localhost:3000/api/v1`;
 
   useEffect(() => {
     const fetchData =async  () => {
       
       try{
-        const res = await axios.get(`${baseURL}/movies`);
+        const res = await axios.get(`${baseURL}/movies?page=${page}&limit=${limit}`);
         if(res) {
-          setResults(res.data);
+          setResults(res.data.items);
+          setTotalPages(res.data.totalPages)
           setIsLoading(false);
         }
         
@@ -30,11 +35,23 @@ const Home = () => {
       console.log("first", results)
     }
     fetchData();
-  }, [isLoading]);
+  }, [isLoading, page]);
 
   const handleSearch = (e) => {
     e.preventDefault();
     setSearchParams({ q: e.target.elements.query.value });
+  };
+
+  const handleNextPage = () => {
+    if (page < totalPages) {
+      setPage(page + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (page > 1) {
+      setPage(page - 1);
+    }
   };
 
   return (
@@ -51,14 +68,30 @@ const Home = () => {
           <input className='border-2 my-2 p-1 rounded-md  bg-black text-white' type="submit" value="Search"/>
         </form>
       </div>
-      <div className='flex flex-wrap gap-6 mx-16 justify-around'>
+      <div className='flex flex-row mt-3  gap-4 justify-center items-center'>
+        <button
+         className='bg-black text-white border-2 my-2 px-3 rounded-full'
+         onClick={handlePrevPage} 
+         disabled={page === 1}>
+          Back
+        </button>
+        <span>{` Page ${page} of ${totalPages} `}</span>
+        <button
+         className='bg-black text-white border-2 my-2 px-3 rounded-full'
+         onClick={handleNextPage} 
+         disabled={page === totalPages}>
+          Next
+        </button>
+      </div>
+      <div className='flex flex-wrap gap-6 m-16 justify-around'>
         {isLoading ? 
         <div className='max-sm:text-center mt-14 text-black font-black'>
           Loading...
           </div>: 
           results?.map((movie) => {
             return <Movie key={movie.title} movie={movie}/>
-          })}
+          })
+          }
       </div>
     </div>
   )
