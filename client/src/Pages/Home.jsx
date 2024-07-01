@@ -7,6 +7,7 @@ const Home = () => {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
+  const [searchItem, setSearchItem] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [results, setResults] = useState([]);
   const [page, setPage] = useState(1);
@@ -20,26 +21,26 @@ const Home = () => {
     const fetchData =async  () => {
       
       try{
-        const res = await axios.get(`${baseURL}/movies?page=${page}&limit=${limit}`);
+        // const res = await axios.get(`${baseURL}/movies?page=${page}&limit=${limit}`);
+        const res = await axios.get(`${localHost}/movies`, {
+          params: { page, limit, search: query }
+        });
         if(res) {
           setResults(res.data.items);
           setTotalPages(res.data.totalPages)
           setIsLoading(false);
         }
-        
-        console.log(results)
       }
       catch(err) {
         console.log("error while fetching data", err);
       }
-      console.log("first", results)
     }
     fetchData();
-  }, [isLoading, page]);
+  }, [isLoading, page, query]);
 
   const handleSearch = (e) => {
     e.preventDefault();
-    setSearchParams({ q: e.target.elements.query.value });
+    setSearchParams({ page: 1, limit, search: searchItem });
   };
 
   const handleNextPage = () => {
@@ -62,6 +63,7 @@ const Home = () => {
           type="search" 
           className="border-2 my-2 p-1 rounded-md mr-3"
           name="query" 
+          onChange={e => setSearchItem(e.target.value)}
           defaultValue={query}
           placeholder='Enter movie name...'
           />
@@ -89,7 +91,7 @@ const Home = () => {
           Loading...
           </div>: 
           results?.map((movie) => {
-            return <Movie key={movie.title} movie={movie}/>
+            return <Movie key={movie.movie_url} movie={movie}/>
           })
           }
       </div>

@@ -67,6 +67,7 @@ app.post("/api/v1/login", (req, res) => {
 app.get("/api/v1/movies", async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 20;
+  const search = req.query.search || '';
   const startIndex = (page - 1) * limit;
   const endIndex = page * limit;
 
@@ -75,6 +76,7 @@ app.get("/api/v1/movies", async (req, res) => {
       return res.status(401).send("Error occured", err);
     }
     const movies = await JSON.parse(result);
+    // const filteredData = movies.filter(movie => typeof(movie.name) === 'string' && movie.title.toLowerCase().includes(search.toLowerCase())) || movies;
     const results = movies.slice(startIndex, endIndex);
     return res.status(200).json({
       page,
